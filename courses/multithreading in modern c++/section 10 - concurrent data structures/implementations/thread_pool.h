@@ -33,8 +33,9 @@ private:
     }
 public:
     non_idle_thread_pool() {
-        
+        _init_threads();
     }
+
     void submit(std::future<T>* future) {
         _q.push(future);
     }
