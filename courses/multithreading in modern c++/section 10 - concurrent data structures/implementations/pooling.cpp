@@ -14,8 +14,9 @@ int main() {
                 return x * 10;
             }
         );
-        tp.submit(f);
+        tp.submit(&f);
     }
+    std::this_thread::sleep_for(std::chrono::seconds(3));
 
     return 0;
 }

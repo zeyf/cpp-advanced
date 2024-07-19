@@ -19,6 +19,7 @@ private:
     std::mutex _mtx;
     std::condition_variable _cv;
     std::queue<T> _q;
+    // Used to prevent lossful wakeup and spurious wakeup on std::condition_variable
     bool not_empty = false;
 
 public:
@@ -31,10 +32,10 @@ public:
     }
 
     T pop() {
-        std::lock_guard<std::mutex> lg{_mtx};
+        std::unique_lock<std::mutex> uLock{_mtx};
         if (_q.size() == 0) {
             // throw concurrent_queue_is_empty_exception();
-            _cv.wait(_mtx, [&](){ return not_empty; });
+            _cv.wait(uLock, [&](){ return not_empty; });
         }
 
         T result = _q.front();
